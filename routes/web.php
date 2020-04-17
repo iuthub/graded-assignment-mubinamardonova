@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Factory;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,49 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [
+	'uses' => 'TaskController@getIndex',
+	'as' => 'mainIndex'
+]);
+
+Route::group([
+	'prefix'=>'admin',
+	'middleware' => ['auth', 'verified']
+], function(){
+
+	Route::get('/', [
+		'uses' => 'TaskController@getAdminIndex',
+		'as'=> 'adminIndex'
+	]);
+
+	Route::get('/edit/{id}', [
+		'uses' => 'TaskController@getAdminEdit',
+		'as' => 'adminEdit'
+	]);
+
+
+	Route::post('/edit', [
+		'uses' => 'TaskController@postAdminEdit',
+		'as' => 'adminEditPost'
+	]);
+
+
+	Route::get('/create', [
+		'uses' => 'TaskController@getAdminCreate',
+		'as' => 'adminCreate'
+	]);
+
+	Route::post('/create', [
+		'uses' => 'TaskController@postAdminCreate',
+		'as' => 'adminCreatePost'
+	]);
+
+	Route::get('/delete/{id}', [
+		'uses' => 'TaskController@getAdminDelete',
+		'as' => 'adminDelete'
+	]);
+
+		
 });
+
+Auth::routes(['verify'=>true]);
